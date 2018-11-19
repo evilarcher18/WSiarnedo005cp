@@ -18,7 +18,7 @@
   <body>
   <div id='page-wrap'>
 	<header class='main' id='h1'>
-		<span class='logeatuGabeak'><a href="logIn.php">LogIn</a> </span>
+		<span class='logeatuGabeak'><a href="login.php">LogIn</a> </span>
 		<span class='logeatuGabeak'><a href="signUp.php">SignUp</a> </span>
 		<span class='logeatuak'><a href="layout.php">LogOut</a> </span>
 		<div id="logInfo"></div>
