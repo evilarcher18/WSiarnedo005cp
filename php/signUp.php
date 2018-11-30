@@ -34,9 +34,9 @@
 			<section class="main" id="s1">
 				<div>				
 				<form id="formularioa" action="signUp.php" method="post" enctype="multipart/form-data">
-					Eposta (*): <input type="text" class="input" name="eposta" size="50"/> <br><br>
+					Eposta (*): <input type="text" class="input" id="eposta" name="eposta" size="50"/> <p id="kar"></p><br><br>
 					Deitura (*): <input type="text" class="input" name="deitura" size="50"/> <br><br>
-					Pasahitza (*): <input type="password" class="input" name="pasahitza" size="50"/> <br><br>
+					Pasahitza (*): <input type="password" class="input" id="pasahitza" name="pasahitza" size="50"/> <br><br>
 					Pasahitza errepikatu (*): <input type="password" class="input" name="pasahitzaErrepikatu" size="50"/> <br><br>
 					Argazkia (hautazkoa): <input type="file" class="input" id="fitxategia" name="fitxategia"/> <br><br>
 					<div id="divIrudi"></div>
@@ -51,6 +51,46 @@
 			<footer class='main' id='f1'>
 				<a href='https://github.com'>Link GITHUB</a>
 			</footer>
+			<script>
+
+				document.getElementById("eposta").onblur = function() {checkEmail()};
+				function checkEmail() {
+					var posta = document.getElementById("eposta").value;
+					var xmlhttp = new XMLHttpRequest();
+
+					xmlhttp.onreadystatechange = function() {
+						
+						if (this.readyState == 4 && this.status == 200) {
+							
+							alert(this.responseText);
+
+						}
+
+					};
+					xmlhttp.open('GET', 'checkEmail.php?erabiltzailea=' + posta, true);
+					xmlhttp.send();
+				}
+
+				document.getElementById("pasahitza").onblur = function() {checkPw()};
+				function checkPw () {
+					var pw = document.getElementById("pasahitza").value;
+					var xmlhttp = new XMLHttpRequest();
+
+					xmlhttp.onreadystatechange = function() {
+						
+						if (this.readyState == 4 && this.status == 200) {
+							
+							alert(this.responseText);
+
+						}
+
+					};
+
+					xmlhttp.open('GET', 'egiaztatuPasahitza.php?pasahitza=' + pw, true);
+					xmlhttp.send();
+				}
+
+			</script>
 		</div>	
 	</body>
 </html>
@@ -61,6 +101,14 @@
 		$deitura = $galdera = preg_replace('/\s\s+/', ' ', trim($_POST['deitura']));
 		$pasahitza = $_POST['pasahitza'];
 		$pasahitzaErrepikatu = $_POST['pasahitzaErrepikatu'];
+
+		$emailfile = fopen("wsdlemailresponse.txt", "r") or die("Unable to open email file!");
+		$emailvalid = fread($emailfile,filesize("wsdlemailresponse.txt"));
+		fclose($emailfile);
+
+		$pwfile = fopen("wsdlpwresponse.txt", "r") or die("Unable to open pw file!");
+		$pwvalid = fread($pwfile,filesize("wsdlpwresponse.txt"));
+		fclose($pwfile);
 		
 		$argazkiTamaina = $_FILES['fitxategia']['size'];
 		if($argazkiTamaina > 0) {
@@ -94,8 +142,9 @@
 				$erroreak = $erroreak . "(hautazkoa) Irudiaren formatua okerra, irudiak '.jpg', '.jpeg', '.png', '.JPG', '.JPEG' edo '.PNG' luzapena eduki behar du";
 		}
 		
-		if (!empty($erroreak)) echo '<script> alert("'.$erroreak.'"); </script>';
-		else {
+		if (!empty($erroreak)){ echo '<script> alert("'.$erroreak.'"); </script>';
+		}else if (strcmp($emailvalid, 'EZ')==0 || strcmp($pwvalid, 'BALIOGABEA')==0) {echo '<script> alert("Eposta edo pasahitza ez dira baliozkoak!!"); </script>';
+		}else {
 			
 			include("dbConfig.php");
 			$linki= mysqli_connect($zerbitzaria,$erabiltzailea,$gakoa,$db);
@@ -105,8 +154,8 @@
 				
 				
 				$data = $linki->query("SELECT eposta FROM users WHERE eposta='".$eposta."'");			
-				if($data->num_rows != 0) echo '<script> alert("Eposta hori duen erabiltzailea jada erregistratuta dago"); </script>';
-				else {
+				if($data->num_rows != 0) {echo '<script> alert("Eposta hori duen erabiltzailea jada erregistratuta dago"); </script>';
+				}else {
 					$linki->query("INSERT INTO users(eposta, deitura, pasahitza, argazkia) values ('$eposta', '$deitura', '$pasahitza', '$argazkia')");					
 					$linki = 0;
 					
