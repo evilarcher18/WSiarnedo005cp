@@ -64,10 +64,20 @@
 			$data = $linki->query("SELECT * FROM users WHERE eposta='".$eposta."'");		
 			if($data->num_rows != 0) {		
 				$erabiltzailea = $data->fetch_assoc();
-				if($pasahitza != $erabiltzailea['pasahitza']) echo '<script> alert("Pasahitza okerra"); </script>';
-				else {
+				$hash = $erabiltzailea['pasahitza'];
+				echo '<script>console.log("'.$hash.'");</script>';
+				if(!password_verify($pasahitza, $hash) && $pasahitza != $hash) { echo '<script> alert("Pasahitza okerra"); </script>';
+				} else if ($erabiltzailea['egoera'] != 0 && $erabiltzailea['ID'] != 28) { echo '<script> alert("Kontu hau desgaituta dago.\n Hitz egin administratzailearekin.");</script>';
+				} else {
 					$id = $erabiltzailea['ID'];
-					echo "<script>location.href='layout.php?logged=$id';</script>";
+					session_start();
+					if($id == 28){
+						$_SESSION['user'] = 'admin';
+						echo "<script>location.href='handlingAccounts.php?logged=$id';</script>";
+					} else {
+						$_SESSION['user'] = 'ikasle';
+						echo "<script>location.href='handlingQuizesAJAX.php?logged=$id';</script>";
+					}					
 					die();
 				}
 			}

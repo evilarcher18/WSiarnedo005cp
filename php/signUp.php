@@ -141,6 +141,8 @@
 			if (!$contains_jpg && !$contains_jpeg && !$contains_png && !$contains_JPG && !$contains_JPEG && !$contains_PNG)
 				$erroreak = $erroreak . "(hautazkoa) Irudiaren formatua okerra, irudiak '.jpg', '.jpeg', '.png', '.JPG', '.JPEG' edo '.PNG' luzapena eduki behar du";
 		}
+
+		$newhash = password_hash($pasahitza, PASSWORD_BCRYPT);
 		
 		if (!empty($erroreak)){ echo '<script> alert("'.$erroreak.'"); </script>';
 		}else if (strcmp($emailvalid, 'EZ')==0 || strcmp($pwvalid, 'BALIOGABEA')==0) {echo '<script> alert("Eposta edo pasahitza ez dira baliozkoak!!"); </script>';
@@ -156,7 +158,7 @@
 				$data = $linki->query("SELECT eposta FROM users WHERE eposta='".$eposta."'");			
 				if($data->num_rows != 0) {echo '<script> alert("Eposta hori duen erabiltzailea jada erregistratuta dago"); </script>';
 				}else {
-					$linki->query("INSERT INTO users(eposta, deitura, pasahitza, argazkia) values ('$eposta', '$deitura', '$pasahitza', '$argazkia')");					
+					$linki->query("INSERT INTO users(eposta, deitura, pasahitza, argazkia) values ('$eposta', '$deitura', '$newhash', '$argazkia')");					
 					$linki = 0;
 					
 					echo "<script>location.href='layout.php?registered=1';</script>";
