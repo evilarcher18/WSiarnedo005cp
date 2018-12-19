@@ -19,7 +19,7 @@
 	<body>
 		<div id='page-wrap'>
 			<header class='main' id='h1'>
-				<span class="right"><a href="logIn.php">LogIn</a> </span>
+				<span class="right"><a href="login.php">LogIn</a> </span>
 				<a id="backButton" href=javascript:history.go(-1);> <img src="../images/atrás.png" width="40" height="40"></a>
 				<h2>Sign up</h2>
 			</header>
@@ -142,7 +142,7 @@
 				$erroreak = $erroreak . "(hautazkoa) Irudiaren formatua okerra, irudiak '.jpg', '.jpeg', '.png', '.JPG', '.JPEG' edo '.PNG' luzapena eduki behar du";
 		}
 
-		$newhash = password_hash($pasahitza, PASSWORD_BCRYPT);
+		$newhash = password_hash($pasahitza, PASSWORD_DEFAULT);
 		
 		if (!empty($erroreak)){ echo '<script> alert("'.$erroreak.'"); </script>';
 		}else if (strcmp($emailvalid, 'EZ')==0 || strcmp($pwvalid, 'BALIOGABEA')==0) {echo '<script> alert("Eposta edo pasahitza ez dira baliozkoak!!"); </script>';
